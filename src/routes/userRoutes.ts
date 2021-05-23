@@ -10,10 +10,12 @@ userRouter.get("/", async (req, res) => {
   return res.json({ users });
 });
 
-userRouter.post("/", async (req, res) => {
+userRouter.post("/register", async (req, res) => {
   const { name, email, password } = req.body;
 
   const result = await getRepository(User).find({ where: { email } });
+
+  if(!email || !password || !name) return res.status(403).json({msg: "Missing Fields"})
 
   if (result.length <= 0) {
     const user = new User();
@@ -23,7 +25,7 @@ userRouter.post("/", async (req, res) => {
     user.password = password;
 
     try {
-      const savedUser = await getRepository(User).save(user);
+       await getRepository(User).save(user);
     } catch (error) {
       console.log(error);
     }
@@ -33,5 +35,25 @@ userRouter.post("/", async (req, res) => {
     return res.status(403).json({ msg: "Email already in use" });
   }
 });
+
+userRouter.post("/login", async (req,res) => {
+  const {email, password} = req.body; 
+
+  if(!email || !password) return res.status(403).json({msg: "Missing Fields"})
+  
+  const result = await getRepository(User).find({ where: { email } });
+
+  if(result.length > 0) {
+    const userArr = result.filter(tempUser => tempUser.email === email)
+
+    const user = userArr[0]
+
+    if(user.password === password) return res.json({msg: "User Authenticated"})
+    
+    return res.json({msg: "Invalid Password"})
+  } 
+
+  return res.json({msg: "User Not Found"})
+})
 
 export default userRouter;
