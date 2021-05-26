@@ -1,11 +1,10 @@
 import express from "express";
 import { User } from "../entity/User";
-import { getRepository } from "typeorm";
 
 const userRouter = express.Router();
 
 userRouter.get("/", async (req, res) => {
-  const users = await getRepository(User).find();
+  const users = await User.find();
 
   return res.json({ users });
 });
@@ -13,9 +12,10 @@ userRouter.get("/", async (req, res) => {
 userRouter.post("/register", async (req, res) => {
   const { name, email, password } = req.body;
 
-  const result = await getRepository(User).find({ where: { email } });
+  const result = await User.find({ where: { email } });
 
-  if(!email || !password || !name) return res.status(403).json({msg: "Missing Fields"})
+  if (!email || !password || !name)
+    return res.status(403).json({ msg: "Missing Fields" });
 
   if (result.length <= 0) {
     const user = new User();
@@ -25,7 +25,7 @@ userRouter.post("/register", async (req, res) => {
     user.password = password;
 
     try {
-       await getRepository(User).save(user);
+      await User.save(user);
     } catch (error) {
       console.log(error);
     }
@@ -36,24 +36,26 @@ userRouter.post("/register", async (req, res) => {
   }
 });
 
-userRouter.post("/login", async (req,res) => {
-  const {email, password} = req.body; 
+userRouter.post("/login", async (req, res) => {
+  const { email, password } = req.body;
 
-  if(!email || !password) return res.status(403).json({msg: "Missing Fields"})
-  
-  const result = await getRepository(User).find({ where: { email } });
+  if (!email || !password)
+    return res.status(403).json({ msg: "Missing Fields" });
 
-  if(result.length > 0) {
-    const userArr = result.filter(tempUser => tempUser.email === email)
+  const result = await User.find({ where: { email } });
 
-    const user = userArr[0]
+  if (result.length > 0) {
+    const userArr = result.filter((tempUser) => tempUser.email === email);
 
-    if(user.password === password) return res.json({msg: "User Authenticated"})
-    
-    return res.json({msg: "Invalid Password"})
-  } 
+    const user = userArr[0];
 
-  return res.json({msg: "User Not Found"})
-})
+    if (user.password === password)
+      return res.json({ msg: "User Authenticated" });
+
+    return res.json({ msg: "Invalid Password" });
+  }
+
+  return res.json({ msg: "User Not Found" });
+});
 
 export default userRouter;
