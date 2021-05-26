@@ -39,22 +39,19 @@ userRouter.post("/register", async (req, res) => {
 userRouter.post("/login", async (req, res) => {
   const { email, password } = req.body;
 
-  if (!email || !password)
+  if (!email || !password) {
     return res.status(403).json({ msg: "Missing Fields" });
-
-  const result = await User.find({ where: { email } });
-
-  if (result.length > 0) {
-    const userArr = result.filter((tempUser) => tempUser.email === email);
-
-    const user = userArr[0];
-
-    if (user.password === password)
-      return res.json({ msg: "User Authenticated" });
-
-    return res.json({ msg: "Invalid Password" });
   }
 
+  const user = await User.findOne({ email });
+
+  if (user !== undefined) {
+    if (user.password === password) {
+      return res.status(200).json({ msg: "User Authenticated" });
+    } else {
+      return res.status(403).json({ msg: "Invalid Password" });
+    }
+  }
   return res.json({ msg: "User Not Found" });
 });
 
