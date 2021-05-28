@@ -3,14 +3,14 @@ import { Entity, PrimaryGeneratedColumn, Column, BaseEntity } from "typeorm";
 @Entity()
 export class Product extends BaseEntity {
   @PrimaryGeneratedColumn()
-  id: number;
+  id!: number;
 
   @Column()
-  name: string;
+  name!: string;
 
   @Column("text")
-  description: string;
+  description!: string;
 
   @Column("double")
-  price: number;
+  price!: number;
 }

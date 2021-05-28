@@ -11,7 +11,7 @@ userRouter.get("/:id", async (req, res) => {
     return res.status(404).json({ msg: "User Not Found " });
 
   // Never send password
-  user.password = null;
+  user.password = "";
   return res.status(200).json(user);
 });
 
