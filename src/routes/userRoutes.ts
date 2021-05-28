@@ -3,10 +3,16 @@ import { User } from "../entity/User";
 
 const userRouter = express.Router();
 
-userRouter.get("/", async (req, res) => {
-  const users = await User.find();
+userRouter.get("/:id", async (req, res) => {
+  const id = parseInt(req.params.id);
+  const user = await User.findOne({ id });
 
-  return res.json({ users });
+  if (user === undefined)
+    return res.status(404).json({ msg: "User Not Found " });
+
+  // Never send password
+  user.password = null;
+  return res.status(200).json(user);
 });
 
 userRouter.post("/register", async (req, res) => {
