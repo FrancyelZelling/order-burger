@@ -18,6 +18,9 @@ export class Order extends BaseEntity {
   @Column({ nullable: true })
   total!: number;
 
+  @Column({ nullable: true, default: "completed" })
+  orderStatus!: string;
+
   @ManyToOne(() => User, (user) => user.orders, { eager: true })
   customer!: User;
 

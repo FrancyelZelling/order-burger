@@ -54,8 +54,6 @@ orderRouter.post("/", async (req, res) => {
     total += product.price;
   });
 
-  console.log(total);
-
   try {
     const order = new Order();
     order.products = productsArr;
