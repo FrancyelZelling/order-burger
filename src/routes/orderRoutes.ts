@@ -59,6 +59,7 @@ orderRouter.post("/", async (req, res) => {
     order.products = productsArr;
     order.customer = user;
     order.total = total;
+    order.orderStatus = "pending";
 
     await order.save();
 
@@ -66,6 +67,30 @@ orderRouter.post("/", async (req, res) => {
   } catch (error) {
     console.log(error);
     return res.status(500).json({ msg: "Failed To Create Order" });
+  }
+});
+
+orderRouter.put("/", async (req, res) => {
+  const { orderStatus } = req.body;
+  const id = parseInt(req.body.id);
+
+  if (!id || !orderStatus) {
+    return res.status(403).json({ msg: "Missing Fields" });
+  }
+
+  const order = await Order.findOne({ id });
+
+  if (order === undefined) {
+    return res.status(404).json({ msg: "Order Not Found" });
+  }
+
+  try {
+    order.orderStatus = orderStatus;
+    await order.save();
+
+    return res.status(200).json(order);
+  } catch (error) {
+    return res.status(500).json({ msg: "Internal Server Error" });
   }
 });
 
