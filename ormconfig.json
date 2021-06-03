@@ -1,7 +1,7 @@
 {
   "type": "sqlite",
   "database": "./src/database.sqlite",
-  "synchronize": true,
+  "synchronize": false,
   "logging": false,
   "entities": ["src/entity/**/*.ts"],
   "migrations": ["src/migration/**/*.ts"],
@@ -12,4 +12,3 @@
     "subscribersDir": "src/subscriber"
   }
 }
-

@@ -2,6 +2,7 @@ import {
   Entity,
   BaseEntity,
   PrimaryGeneratedColumn,
+  Column,
   ManyToMany,
   ManyToOne,
   JoinTable,
@@ -13,6 +14,9 @@ import { Product } from "./Product";
 export class Order extends BaseEntity {
   @PrimaryGeneratedColumn()
   id!: number;
+
+  @Column({ nullable: true })
+  total!: number;
 
   @ManyToOne(() => User, (user) => user.orders, { eager: true })
   customer!: User;

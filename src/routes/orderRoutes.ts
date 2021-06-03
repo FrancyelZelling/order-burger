@@ -49,10 +49,18 @@ orderRouter.post("/", async (req, res) => {
       .json({ msg: "Cannot Create Order With No Products" });
   }
 
+  let total: number = 0;
+  productsArr.forEach((product) => {
+    total += product.price;
+  });
+
+  console.log(total);
+
   try {
     const order = new Order();
     order.products = productsArr;
     order.customer = user;
+    order.total = total;
 
     await order.save();
 
