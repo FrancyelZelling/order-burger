@@ -6,6 +6,7 @@ import {
   OneToMany,
 } from "typeorm";
 import { Order } from "./Order";
+import bcryptjs from "bcryptjs";
 
 @Entity()
 export class User extends BaseEntity {
@@ -23,4 +24,12 @@ export class User extends BaseEntity {
 
   @OneToMany(() => Order, (order) => order.customer)
   orders!: Order[];
+
+  static encryptPassword(password: string, salt: string) {
+    return bcryptjs.hashSync(password, salt);
+  }
+
+  static comparePassword(password: string, salt: string) {
+    return bcryptjs.compareSync(password, salt);
+  }
 }

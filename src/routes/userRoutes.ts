@@ -1,7 +1,9 @@
 import express from "express";
 import { User } from "../entity/User";
+import bcryptjs from "bcryptjs";
 
 const userRouter = express.Router();
+const salt = bcryptjs.genSaltSync(10);
 
 userRouter.get("/:id", async (req, res) => {
   const id = parseInt(req.params.id);
@@ -23,12 +25,14 @@ userRouter.post("/register", async (req, res) => {
   if (!email || !password || !name)
     return res.status(403).json({ msg: "Missing Fields" });
 
+  const hashed = User.encryptPassword(password, salt);
+
   if (result.length <= 0) {
     const user = new User();
 
     user.name = name;
     user.email = email;
-    user.password = password;
+    user.password = hashed;
 
     try {
       await User.save(user);
@@ -51,14 +55,17 @@ userRouter.post("/login", async (req, res) => {
 
   const user = await User.findOne({ email });
 
-  if (user !== undefined) {
-    if (user.password === password) {
-      return res.status(200).json({ msg: "User Authenticated" });
-    } else {
-      return res.status(403).json({ msg: "Invalid Password" });
-    }
+  if (user === undefined) {
+    return res.status(404).json({ msg: "User Not Found" });
   }
-  return res.json({ msg: "User Not Found" });
+
+  const compareResult = User.comparePassword(password, user.password);
+
+  if (compareResult === false) {
+    return res.status(403).json({ msg: "Wrong Password" });
+  }
+
+  return res.json({ msg: "User Authenticated", user: user.name });
 });
 
 export default userRouter;
