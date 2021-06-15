@@ -10,6 +10,9 @@ createConnection()
     App.use("/users", userRouter);
     App.use("/product", productRouter);
     App.use("/order", orderRouter);
+    await connection.query("PRAGMA foreign_keys=OFF;");
+    await connection.runMigrations();
+    await connection.query("PRAGMA foreign_keys=ON;");
     App.listen(3000, () => {
       console.log(`Server Running on http://localhost:3000`);
     });

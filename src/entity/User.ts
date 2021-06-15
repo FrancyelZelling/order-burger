@@ -22,6 +22,12 @@ export class User extends BaseEntity {
   @Column()
   password!: string;
 
+  @Column({nullable: true})
+  address!: string;
+
+  @Column({ nullable: true })
+  cellphone!: string;
+
   @OneToMany(() => Order, (order) => order.customer)
   orders!: Order[];
 
