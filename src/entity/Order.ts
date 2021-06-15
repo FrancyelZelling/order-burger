@@ -18,6 +18,12 @@ export class Order extends BaseEntity {
   @Column({ nullable: true })
   total!: number;
 
+  @Column({ nullable: true, type: "datetime" })
+  created_at!: string;
+
+  @Column({ nullable: true, type: "datetime"})
+  updated_at!: string;
+
   @Column({ nullable: true, default: "completed" })
   orderStatus!: string;
 
