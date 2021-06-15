@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, OneToMany } from "typeorm";
+import { Photos } from "./Photos"
 
 @Entity()
 export class Product extends BaseEntity {
@@ -13,4 +14,7 @@ export class Product extends BaseEntity {
 
   @Column("double")
   price!: number;
+
+  @OneToMany(() => Photos, photos => photos.product)
+  photos!: Photos[]
 }
