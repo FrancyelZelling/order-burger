@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { Product } from "../entity/Product";
+import { Category } from "../entity/Category"
 
 const productRouter = Router();
 
@@ -21,7 +22,7 @@ productRouter.get("/:id", async (req, res) => {
 });
 
 productRouter.post("/", async (req, res) => {
-  const { name, description, price } = req.body;
+  const { name, description, price, categoryId } = req.body;
 
   if (!name || !description || !price)
     return res.status(403).json({ msg: "Missing Fields" });
@@ -31,6 +32,17 @@ productRouter.post("/", async (req, res) => {
     description,
     price,
   });
+
+  const category = await Category.findOne({ where: {id: categoryId} })
+
+  if (category === undefined){
+    product.category = null
+  } else {
+    product.category = category.id
+  }
+
+  const test = await Product.find({where: {category: 1}})
+  console.log(test)
 
   try {
     await Product.save(product);
@@ -44,7 +56,7 @@ productRouter.post("/", async (req, res) => {
 });
 
 productRouter.put("/", async (req, res) => {
-  const { id, name, description, price } = req.body;
+  const { id, name, description, price, categoryId } = req.body;
 
   if (!id || !name || !description || !price)
     return res.status(403).json({ msg: "Missing Fields" });
@@ -57,6 +69,12 @@ productRouter.put("/", async (req, res) => {
   productToUpdate.name = name;
   productToUpdate.description = description;
   productToUpdate.price = price;
+
+  const category = await Category.findOne({ where: {id: categoryId} })
+
+  if(category !== undefined) {
+    productToUpdate.category = category.id
+  }
 
   try {
     await productToUpdate.save();

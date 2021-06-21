@@ -19,6 +19,6 @@ export class Product extends BaseEntity {
   @OneToMany(() => Photos, photos => photos.product)
   photos!: Photos[]
 
-  @ManyToOne(() => Category, category => category.name, {nullable: true})
-  category!: string;
+  @ManyToOne(() => Category, category => category.name, {nullable: true, eager: true})
+  category!: number | null;
 }
